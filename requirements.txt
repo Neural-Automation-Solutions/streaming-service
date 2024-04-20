@@ -1,0 +1,5 @@
+git+ssh://git@github.com/Neural-Automation-Solutions/videolib.git
+numpy==1.26.4
+opencv-python==4.9.0.80
+pyzmq==26.0.2
+zmq==0.0.0
