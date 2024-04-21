@@ -1,10 +1,38 @@
-import time
 from http.client import HTTPSConnection
 import threading
+import json
+import paho.mqtt.client as mqtt
+
 from videolib.video import Video
 
 # Initialize video
 vid = Video()
+
+# Set up MQTT client
+def on_connect(client, userdata, flags, rc, properties):
+    print(f'Connected with result code {rc}')
+    client.subscribe('vdc-1/streaming')
+
+def on_message(client, userdata, msg):
+    global vid
+    
+    message = json.loads(msg.payload.decode())
+    command = message['command']
+    
+    if command == 'start-stream-bboxes':
+        print('Starting stream...')
+        vid = Video(port=5556)
+    elif command == 'stop-stream-bboxes':
+        print('Stopping stream...')
+        vid = Video()
+
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+client.on_connect = on_connect
+client.on_message = on_message
+client.username_pw_set('nas', 'apoel123')
+client.connect('138.68.104.255', 1883, 60)
+
+client.loop_start()
 
 # Set up a persistent HTTPS connection
 url = '/stream/test-stream'
@@ -54,6 +82,9 @@ thread.start()
 # Main loop to capture frames
 while True:
     frame = vid.get_frame_bytes()
+    print('got frame')
     lock.acquire()
     frame_stack = [frame]  # Reset the stack with the most recent frame
     lock.release()
+
+client.loop_stop()
