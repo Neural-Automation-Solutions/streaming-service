@@ -82,7 +82,6 @@ thread.start()
 # Main loop to capture frames
 while True:
     frame = vid.get_frame_bytes()
-    print('got frame')
     lock.acquire()
     frame_stack = [frame]  # Reset the stack with the most recent frame
     lock.release()
