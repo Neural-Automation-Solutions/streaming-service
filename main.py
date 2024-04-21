@@ -30,7 +30,7 @@ client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 client.on_connect = on_connect
 client.on_message = on_message
 client.username_pw_set('nas', 'apoel123')
-client.connect('138.68.104.255', 1883, 60)
+client.connect('mqtt-broker.nas-ai.org', 1883, 60)
 
 client.loop_start()
 
